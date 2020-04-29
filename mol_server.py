@@ -49,7 +49,7 @@ def get_atoms_str_PDB(code):
 def get_atoms_str_PUBCHEM(name):
     print(name)
     if not os.path.exists(pubchem_root+"/"+name+".sdf"):
-        urllib.request.urlretrieve("https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/"+name+"/sdf",pubchem_root+"/"+name+".sdf")
+        urllib.request.urlretrieve("https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/"+name+"/sdf?record_type=3d",pubchem_root+"/"+name+".sdf")
 
     # result = parse_sdf_file("Structure2D_CID_962.sdf")
     result = parse_sdf_file(pubchem_root+"/"+name+".sdf")
