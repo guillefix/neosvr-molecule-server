@@ -19,8 +19,12 @@ pdb_root = "pdb_files"
 # code="5B27"
 
 def atom_array_to_string(array):
-    #converts a numpy array with rows corresponding to (x,y,z,atom_type) to a formated string
+    #converts a numpy array with rows corresponding to (x,y,z,atom_type) to a formated string for Neos
     return ",".join(["["+";".join(["{:.4f}".format(c) for c in coords[:3]])+"]:"+str(coords[3])+":" for coords in array])+","
+
+def bonds_list_to_string(bonds):
+    #converts a list of bonds into a formatted string for Neos
+    return ",".join([":".join(x)+":" for x in bonds])+","
 
 def get_atoms_str_PDB(code):
     if not os.path.exists(pubchem_root+"/"+code+".pdb"):
@@ -55,9 +59,13 @@ def get_atoms_str_PUBCHEM(name):
     result = parse_sdf_file(pubchem_root+"/"+name+".sdf")
     atoms = filter(lambda x: x[0][0]=="?",result[0].items())
     atoms = map(lambda x:x[1],atoms)
+    bonds = filter(lambda x: x[0][0]=="(",result[0].items())
+    bonds = map(lambda x:x[0].split(" ")[-2:],bonds)
+    bonds = map(lambda x:(x[0][5:], x[1][5:-1]),bonds)
+    bonds_str = bonds_list_to_string(bonds)
     data = pd.DataFrame(atoms)
     atoms_str = atom_array_to_string(data.values)
-    return atoms_str
+    return atoms_str+"|"+bonds_str
 
 class S(BaseHTTPRequestHandler):
     def _set_headers(self):
